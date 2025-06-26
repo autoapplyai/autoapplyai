@@ -5,7 +5,7 @@ on:
     branches: [ main ]
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '0 3 * * *'   # daily at 03:00 UTC
 
 jobs:
   apply:
@@ -22,26 +22,37 @@ jobs:
         run: |
           pip install selenium pyyaml requests weasyprint jinja2
 
-      - name: Install Google Chrome & matching ChromeDriver
+      - name: Install Google Chrome & ChromeDriver
         run: |
           # Add Google Chrome repo and key
-          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub \
+            | sudo apt-key add -
           echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" \
             | sudo tee /etc/apt/sources.list.d/google-chrome.list
 
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable unzip
 
-          # Extract major version via sed + backticks
-          CHROME_VER=`google-chrome --version | sed -E 's/Google Chrome ([0-9]+)\..*/\1/'`
+          # Detect Chrome major version
+          CHROME_VER=$(google-chrome --version \
+            | sed -E 's/Google Chrome ([0-9]+)\..*/\1/')
           echo "🔍 Detected Chrome major version $CHROME_VER"
 
-          # Fetch the matching ChromeDriver
-          DRIVER_VER=`curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VER`
-          echo "🔍 Downloading ChromeDriver version $DRIVER_VER"
-          curl -Lo /tmp/chromedriver_linux64.zip \
+          # Try to fetch matching driver, else fall back to latest
+          DRIVER_VER=$(curl -fsS \
+            "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VER" \
+            || echo "")
+          if [ -z "$DRIVER_VER" ]; then
+            echo "⚠️ No driver for version $CHROME_VER, falling back to latest"
+            DRIVER_VER=$(curl -fsS \
+              https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+          fi
+          echo "🔍 Using ChromeDriver version $DRIVER_VER"
+
+          # Download & install the driver
+          curl -fsS -Lo /tmp/chromedriver.zip \
             "https://chromedriver.storage.googleapis.com/$DRIVER_VER/chromedriver_linux64.zip"
-          unzip -o /tmp/chromedriver_linux64.zip -d /tmp
+          unzip -o /tmp/chromedriver.zip -d /tmp
           sudo mv /tmp/chromedriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/chromedriver
 
