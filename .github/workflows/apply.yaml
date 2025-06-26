@@ -6,7 +6,7 @@ on:
       - main
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * *'   # daily at 03:00 UTC
+    - cron: '0 3 * * *'
 
 jobs:
   apply:
@@ -23,10 +23,11 @@ jobs:
         run: |
           pip install selenium pyyaml requests weasyprint jinja2
 
-      - name: Install Chrome & ChromeDriver
+      - name: Install Chromium & ChromeDriver
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-chromedriver
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          sudo ln -sf /usr/bin/chromium-browser /usr/bin/google-chrome
 
       - name: Find jobs
         run: python find_jobs.py
