@@ -1,9 +1,12 @@
 name: Auto-Apply AI
 
 on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
   schedule:
-    - cron: '0 3 * * *'     # daily at 03:00 UTC
-  workflow_dispatch:        # manual trigger
+    - cron: '0 3 * * *'   # daily at 03:00 UTC
 
 jobs:
   apply:
@@ -18,117 +21,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install selenium pyyaml weasyprint jinja2
+          pip install selenium pyyaml requests weasyprint jinja2
 
       - name: Install Chrome & ChromeDriver
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-chromedriver
 
-      - name: Run Auto-Apply
-        env:
-          SMTP_USER: ${{ secrets.SMTP_USER }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS }}
-        run: python generate_application.pyname: Auto-Apply AI
-
-on:
-  schedule:
-    - cron: '0 3 * * *'     # daily at 03:00 UTC
-  workflow_dispatch:        # manual trigger  GNU nano 6.2                                                          .github/workflows/apply.yml                       >
-name: Auto-Apply AIname: Auto-Apply AI
-
-on:
-  schedule:
-    - cron: '0 3 * * *'     # daily at 03:00 UTC
-  workflow_dispatch:        # manual trigger
-
-jobs:
-  apply:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: |
-          pip install selenium pyyaml weasyprint jinja2
-
-      - name: Install Chrome & ChromeDriver
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-chromedriver
-
-      - name: Run Auto-Apply
-        env:
-          SMTP_USER: ${{ secrets.SMTP_USER }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS }}
-        run: python generate_application.pyname: Auto-Apply AI
-
-on:
-  schedule:
-    - cron: '0 3 * * *'     # daily at 03:00 UTC
-  workflow_dispatch:        # manual trigger  GNU nano 6.2                                                          .github/workflows/apply.yml                                                                    
-name: Auto-Apply AI
-
-on:
-  schedule:
-    - cron: '0 3 * * *'     # daily at 03:00 UTC
-  workflow_dispatch:        # manual trigger
-
-jobs:
-  apply:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: |
-          pip install selenium pyyaml weasyprint jinja2
-
-      - name: Install Chrome & ChromeDriver
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-chromedriver
-
-      - name: Run Auto-Apply
-        env:
-          SMTP_USER: ${{ secrets.SMTP_USER }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS }}
-        run: python generate_application.pyname: Auto-Apply AI
-
-on:
-  schedule:
-    - cron: '0 3 * * *'     # daily at 03:00 UTC
-  workflow_dispatch:        # manual trigger
-
-jobs:
-  apply:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: |
-          pip install selenium pyyaml weasyprint jinja2
-
-      - name: Install Chrome & ChromeDriver
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-chromedriver
+      - name: Find jobs
+        run: python find_jobs.py
 
       - name: Run Auto-Apply
         env:
