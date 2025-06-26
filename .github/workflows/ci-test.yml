@@ -1,0 +1,8 @@
+name: CI Test
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "✅ CI is alive"
