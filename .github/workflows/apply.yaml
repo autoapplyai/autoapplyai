@@ -5,7 +5,7 @@ on:
     branches: [ main ]
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * *'   # daily at 03:00 UTC
+    - cron: '0 3 * * *'  # daily at 03:00 UTC
 
 jobs:
   apply:
@@ -14,24 +14,28 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - name: Install Python deps
+      - name: Install dependencies (& webdriver-manager)
         run: |
-          pip install selenium pyyaml requests weasyprint jinja2
+          pip install selenium pyyaml requests weasyprint jinja2 webdriver-manager
 
-      - name: Install Chromium & matching driver
+      - name: Install Chromium Browser
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium chromium-driver
+          sudo apt-get install -y chromium-browser
 
-          # Symlink Chromium so Selenium finds "google-chrome"
-          sudo ln -sf /usr/bin/chromium /usr/bin/google-chrome
+      - name: Symlink Chromium so Selenium finds “google-chrome”
+        run: |
+          sudo ln -sf /usr/bin/chromium-browser /usr/bin/google-chrome
 
-          # Symlink the driver onto your PATH
-          sudo ln -sf /usr/lib/chromium-driver/chromedriver /usr/local/bin/chromedriver
+      - name: Debug Chrome & driver paths
+        run: |
+          echo "Which chromium-browser → $(which chromium-browser)"  
+          ls -l /usr/bin/chromium-browser /usr/bin/google-chrome || true  
 
       - name: Find jobs
         run: python find_jobs.py
