@@ -24,21 +24,23 @@ jobs:
 
       - name: Install Google Chrome & matching ChromeDriver
         run: |
-          # Install Chrome
+          # Add Google Chrome repo and key
           wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" \
             | sudo tee /etc/apt/sources.list.d/google-chrome.list
+
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable unzip
 
-          # Derive major version
-          CHROME_VER=\$(google-chrome --version | awk '{print \$3}' | cut -d. -f1)
-          echo "🔍 Detected Chrome major version \$CHROME_VER"
+          # Extract major version via sed + backticks
+          CHROME_VER=`google-chrome --version | sed -E 's/Google Chrome ([0-9]+)\..*/\1/'`
+          echo "🔍 Detected Chrome major version $CHROME_VER"
 
-          # Fetch matching driver
-          DRIVER_VER=\$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_\$CHROME_VER")
-          echo "🔍 Fetching ChromeDriver version \$DRIVER_VER"
-          wget -N "https://chromedriver.storage.googleapis.com/\$DRIVER_VER/chromedriver_linux64.zip" -P /tmp
+          # Fetch the matching ChromeDriver
+          DRIVER_VER=`curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VER`
+          echo "🔍 Downloading ChromeDriver version $DRIVER_VER"
+          curl -Lo /tmp/chromedriver_linux64.zip \
+            "https://chromedriver.storage.googleapis.com/$DRIVER_VER/chromedriver_linux64.zip"
           unzip -o /tmp/chromedriver_linux64.zip -d /tmp
           sudo mv /tmp/chromedriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/chromedriver
