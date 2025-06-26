@@ -1,0 +1,93 @@
+[
+  {
+    "title": "Registered Nurse",
+    "company": "Sunrise Medical Center",
+    "description": "Seeking a compassionate RN with experience in patient care, medication administration, and electronic health records.",
+    "email": "hr@sunrisemedical.org"
+  },
+  {
+    "title": "Elementary School Teacher",
+    "company": "Greenfield Academy",
+    "description": "Looking for a certified teacher with classroom management skills, curriculum planning, and a passion for early education.",
+    "email": "careers@greenfieldacademy.edu"
+  },
+  {
+    "title": "Electrician",
+    "company": "BrightSpark Electrical",
+    "description": "Hiring a licensed electrician with experience in residential wiring, circuit troubleshooting, and safety compliance.",
+    "email": "jobs@brightspark.co"
+  },
+  {
+    "title": "Graphic Designer",
+    "company": "Pixel & Hue",
+    "description": "Seeking a creative designer skilled in Adobe Creative Suite, branding, and digital illustration.",
+    "email": "design@pixelandhue.com"
+  },
+  {
+    "title": "Police Officer",
+    "company": "City of Riverton",
+    "description": "Looking for candidates with law enforcement training, community engagement, and crisis response skills.",
+    "email": "recruitment@riverton.gov"
+  },
+  {
+    "title": "Chef de Partie",
+    "company": "La Petite Cuisine",
+    "description": "Hiring a chef with experience in French cuisine, kitchen leadership, and plating presentation.",
+    "email": "kitchen@lapetitecuisine.fr"
+  },
+  {
+    "title": "Construction Project Manager",
+    "company": "BuildRight Contractors",
+    "description": "Seeking a PM with experience in site supervision, budgeting, and subcontractor coordination.",
+    "email": "pm@buildrightco.com"
+  },
+  {
+    "title": "Veterinarian",
+    "company": "Paws & Claws Animal Hospital",
+    "description": "Looking for a licensed vet with diagnostic skills, surgical experience, and a love for animals.",
+    "email": "vetjobs@pawsclaws.org"
+  },
+  {
+    "title": "Flight Attendant",
+    "company": "SkyJet Airlines",
+    "description": "Seeking friendly, safety-focused professionals with excellent communication and customer service skills.",
+    "email": "crew@skyjetair.com"
+  },
+  {
+    "title": "Social Media Manager",
+    "company": "BuzzHive Marketing",
+    "description": "Hiring a digital native with experience in content strategy, analytics, and platform management.",
+    "email": "apply@buzzhive.io"
+  },
+  {
+    "title": "Data Analyst",
+    "company": "Acme Corp",
+    "description": "Seeking a data analyst with strong Python, SQL, and data visualization experience using tools like Tableau or Power BI.",
+    "email": "jobs@acmecorp.com"
+  },
+  {
+    "title": "Business Intelligence Developer",
+    "company": "InsightWorks",
+    "description": "Looking for a BI developer with data modeling, ETL pipeline design, and AWS or Azure experience.",
+    "email": "careers@insightworks.io"
+  },
+  {
+    "title": "Machine Learning Engineer",
+    "company": "Visionary AI",
+    "description": "Hiring an ML engineer with skills in Python, TensorFlow, deployment pipelines, and real-time data inference.",
+    "email": "mljobs@visionary.ai"
+  },
+  {
+    "title": "Product Analyst",
+    "company": "NovaMetrics",
+    "description": "Seeking an analyst to drive insights from A/B testing, user funnels, and cohort analysis.",
+    "email": "analytics@novametrics.com"
+  },
+  {
+    "title": "Data Engineer",
+    "company": "StreamForge",
+    "description": "Hiring a data engineer with Apache Spark, Airflow, distributed processing, and SQL optimization skills.",
+    "email": "engineers@streamforge.io"
+  }
+]
+

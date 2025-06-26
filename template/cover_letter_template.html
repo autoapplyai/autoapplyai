@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Cover Letter</title>
+  <style>
+    body { font-family: Georgia, serif; margin: 50px; line-height: 1.6; }
+    .header { margin-bottom: 40px; }
+    .signature { margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <p>{{ profile.name }}<br>
+    {{ profile.email }} | {{ profile.phone }}<br>
+    {{ profile.location }}</p>
+  </div>
+
+  <p>Dear Hiring Team at {{ job.company }},</p>
+
+  <p>I'm excited to apply for the <strong>{{ job.title }}</strong> position. With a background in
+  {{ profile.title.lower() }} and a passion for creating exceptional customer experiences,
+  I bring both empathy and results-driven thinking to every interaction.</p>
+
+  <p>In my most recent role at {{ profile.experience[0].company }}, I
+  {{ profile.experience[0].description.lower() }} — a clear example of how I combine leadership
+  with hands-on service.</p>
+
+  <p>I thrive in fast-paced environments, enjoy problem-solving, and speak both English and Spanish fluently.
+  Tools like Zendesk and Intercom are second nature to me.</p>
+
+  <p>I'd love to bring that energy to {{ job.company }} and help grow a support culture that customers rave about.
+  Thank you for considering my application — I’d be thrilled to discuss how I can contribute to your team.</p>
+
+  <p class="signature">Sincerely,<br>{{ profile.name }}</p>
+</body>
+</html>

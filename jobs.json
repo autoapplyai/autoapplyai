@@ -1,0 +1,30 @@
+[
+  {
+    "title": "Frontend Developer",
+    "description": "We’re looking for a React.js expert to join our distributed team. You’ll build and maintain our web dashboard, collaborating with designers and backend engineers.",
+    "link": "https://example.com/apply/frontend-dev-123",
+    "location": "Remote",
+    "company": "TechNova Global"
+  },
+  {
+    "title": "Customer Support Representative",
+    "description": "Handle incoming support tickets via chat and email. Must be fluent in Spanish and English. Prior experience with Zendesk or Freshdesk is a plus.",
+    "link": "https://jobs.localcorp.ec/apply/support-456",
+    "location": "Guayaquil, Ecuador",
+    "company": "LocalCorp S.A."
+  },
+  {
+    "title": "Data Analyst",
+    "description": "Join our analytics team in São Paulo to design dashboards, run A/B tests, and derive insights from user behavior data. SQL and Python required.",
+    "link": "https://jobs.datainsights.com/apply/data-789",
+    "location": "São Paulo, Brazil",
+    "company": "DataInsights Ltd."
+  },
+  {
+    "title": "Marketing Specialist",
+    "description": "Develop and execute digital marketing campaigns across social media and Google Ads. Must have 2+ years in performance marketing and a track record of ROI-driven work.",
+    "link": "https://careers.advertpro.eu/apply/marketing-321",
+    "location": "Madrid, Spain",
+    "company": "AdvertPro Europe"
+  }
+]

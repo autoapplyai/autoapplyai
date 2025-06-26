@@ -1,0 +1,11 @@
+Name: Your Name
+Email: your.email@example.com
+Phone: +593-9XX-XXXX-XXX
+
+Applying for: Frontend Developer at TechNova Global
+
+Professional Summary:
+3 years building frontend apps with React and dashboards with Python/SQL, plus customer-facing support roles.
+
+Key Skills:
+React.js, Python, SQL, Zendesk, Performance Marketing

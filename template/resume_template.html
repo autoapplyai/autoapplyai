@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{{ profile.name }} – Resume</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; color: #333; }
+    h1 { font-size: 28px; margin-bottom: 5px; }
+    h2 { font-size: 20px; margin-top: 25px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+    p, li { font-size: 16px; }
+    ul { list-style: none; padding-left: 0; }
+    li::before { content: "• "; color: #007acc; }
+  </style>
+</head>
+<body>
+
+  <h1>{{ profile.name }}</h1>
+  <p>Email: {{ profile.email }}{% if profile.phone %} | Phone: {{ profile.phone }}{% endif %}</p>
+
+  <h2>Skills Match Summary</h2>
+  <p>{{ match_score }}</p>
+
+  {% if matched_skills %}
+    <h2>Matched Skills</h2>
+    <ul>
+      {% for skill in matched_skills %}
+        <li>{{ skill }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if unmatched_skills %}
+    <h2>Additional Skills</h2>
+    <ul>
+      {% for skill in unmatched_skills %}
+        <li>{{ skill }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}

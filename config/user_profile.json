@@ -1,0 +1,61 @@
+{
+  "name": "Diego Rivera",
+  "email": "diego@example.com",
+  "phone": "+1-555-123-4567",
+  "location": "Guayaquil, Ecuador",
+  "title": "Customer Experience Specialist",
+  "summary": "Enthusiastic and empathetic support professional with 5+ years of experience improving customer satisfaction and retention. Skilled in live chat, phone, and email support.",
+  
+  "skills": [
+    "Customer Service",
+    "CRM tools",
+    "Conflict Resolution",
+    "Zendesk",
+    "Intercom",
+    "Email Support",
+    "Live Chat",
+    "Problem Solving",
+    "Time Management",
+    "Bilingual: Spanish/English"
+  ],
+
+  "experience": [
+    {
+      "role": "Customer Support Manager",
+      "company": "Supportly Inc.",
+      "start_date": "2021-04",
+      "end_date": "2024-05",
+      "description": "Led a team of 10 support agents, reduced ticket resolution time by 30%, and implemented a proactive help center using Zendesk."
+    },
+    {
+      "role": "Customer Support Agent",
+      "company": "TechSage Solutions",
+      "start_date": "2018-01",
+      "end_date": "2021-03",
+      "description": "Handled 100+ inquiries daily across chat and email, consistently exceeding 95% customer satisfaction rating."
+    }
+  ],
+
+  "education": [
+    {
+      "degree": "B.A. in Communications",
+      "institution": "University of Guayaquil",
+      "graduation_year": 2017
+    }
+  ],
+
+  "certifications": [
+    {
+      "name": "Zendesk Certified Admin",
+      "issued_by": "Zendesk",
+      "year": 2022
+    }
+  ],
+
+  "job_preferences": {
+    "remote": true,
+    "locations": ["Remote", "United States", "Latin America"],
+    "preferred_titles": ["Customer Support Manager", "Support Lead", "Client Success Specialist"]
+  }
+}
+
