@@ -1,0 +1,18 @@
+# config.yaml
+personal:
+  name: "Jeff McEntarffer"
+  email: "Jmcentarffer13@Gmail.com"
+  location: "Ecuador (US Citizen)"
+  phone: "+593-98-104-8846"
+skills:
+  - customer service
+  - sales
+  - administrative support
+  - strategic planning
+  - budgeting
+  - bilingual (English/Spanish)
+threshold: 0.75    # only keep jobs matching ≥75% of these skills
+resume_template: "templates/resume.tpl"
+cover_template:  "templates/cover.tpl"
+resume_output:   "output/Jeff_McEntarffer_Resume.pdf"
+cover_output:    "output/Jeff_McEntarffer_CL.pdf"
