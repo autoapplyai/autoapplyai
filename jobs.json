@@ -1,51 +1,11 @@
- {
-    "company": "Heroku Test Site",
-    "title": "Frontend Dev (Test)",
-    "apply_url": "http://the-internet.herokuapp.com/upload",
-    "selectors": {
-      "resume": "input#file-upload",         // file‐input for resume
-      "cover_letter": "input#file-upload",   // same input—for demo only
-      "submit": "button#file-submit"         // “Upload” button
-    },
-    "resume_path": "output/resume.pdf",
-    "cover_letter_path": "output/cover_letter.pdf"
-  },
+[
   {
-    "company": "Heroku Test Site",
-    "title": "Customer Support (Test)",
-    "apply_url": "http://the-internet.herokuapp.com/upload",
-    "selectors": {
-      "resume": "input#file-upload",
-      "cover_letter": "input#file-upload",
-      "submit": "button#file-submit"
-    },
-    "resume_path": "output/resume.pdf",
-    "cover_letter_path": "output/cover_letter.pdf"
-  }
-][
-  {
-    "company": "Heroku Test Site",
-    "title": "Frontend Dev (Test)",
-    "apply_url": "http://the-internet.herokuapp.com/upload",
-    "selectors": {
-      "resume": "input#file-upload",         // file‐input for resume
-      "cover_letter": "input#file-upload",   // same input—for demo only
-      "submit": "button#file-submit"         // “Upload” button
-    },
-    "resume_path": "output/resume.pdf",
-    "cover_letter_path": "output/cover_letter.pdf"
-  },
-  {
-    "company": "Heroku Test Site",
-    "title": "Customer Support (Test)",
-    "apply_url": "http://the-internet.herokuapp.com/upload",
-    "selectors": {
-      "resume": "input#file-upload",
-      "cover_letter": "input#file-upload",
-      "submit": "button#file-submit"
-    },
-    "resume_path": "output/resume.pdf",
-    "cover_letter_path": "output/cover_letter.pdf"
+    "title": "TestCo Backend Developer",
+    "url": "https://testco.example.com/jobs/backend-developer",
+    "company": "TestCo",
+    "location": "Remote",
+    "tags": ["Python", "Django", "REST"],
+    "match_percent": 90,
+    "timestamp": "2025-06-26T23:00:00Z"
   }
 ]
-
