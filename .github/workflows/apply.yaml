@@ -2,11 +2,10 @@ name: Auto-Apply AI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * *'   # daily at 03:00 UTC
+    - cron: '0 3 * * *'
 
 jobs:
   apply:
@@ -23,20 +22,24 @@ jobs:
         run: |
           pip install selenium pyyaml requests weasyprint jinja2
 
-      - name: Install Google Chrome & ChromeDriver
+      - name: Install Google Chrome & matching ChromeDriver
         run: |
-          # Add Google’s apt repo and key
+          # Install Chrome
           wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" \
             | sudo tee /etc/apt/sources.list.d/google-chrome.list
-
           sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+          sudo apt-get install -y google-chrome-stable unzip
 
-          # Grab matching ChromeDriver
-          LATEST=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
-          wget -N https://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip -P /tmp
-          unzip /tmp/chromedriver_linux64.zip -d /tmp
+          # Derive major version
+          CHROME_VER=\$(google-chrome --version | awk '{print \$3}' | cut -d. -f1)
+          echo "🔍 Detected Chrome major version \$CHROME_VER"
+
+          # Fetch matching driver
+          DRIVER_VER=\$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_\$CHROME_VER")
+          echo "🔍 Fetching ChromeDriver version \$DRIVER_VER"
+          wget -N "https://chromedriver.storage.googleapis.com/\$DRIVER_VER/chromedriver_linux64.zip" -P /tmp
+          unzip -o /tmp/chromedriver_linux64.zip -d /tmp
           sudo mv /tmp/chromedriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/chromedriver
 
