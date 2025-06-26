@@ -22,20 +22,16 @@ jobs:
         run: |
           pip install selenium pyyaml requests weasyprint jinja2
 
-      - name: Install Chromium & ChromeDriver
+      - name: Install Chromium & matching driver
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
+          sudo apt-get install -y chromium chromium-driver
 
-          # Point Selenium’s “chrome” to Chromium
-          sudo ln -sf /usr/bin/chromium-browser /usr/bin/google-chrome
+          # Symlink Chromium so Selenium finds "google-chrome"
+          sudo ln -sf /usr/bin/chromium /usr/bin/google-chrome
 
-          # Ensure chromedriver on PATH is the apt-installed one
-          if [ -f /usr/bin/chromedriver ]; then
-            sudo ln -sf /usr/bin/chromedriver /usr/local/bin/chromedriver
-          elif [ -f /usr/lib/chromium-browser/chromedriver ]; then
-            sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
-          fi
+          # Symlink the driver onto your PATH
+          sudo ln -sf /usr/lib/chromium-driver/chromedriver /usr/local/bin/chromedriver
 
       - name: Find jobs
         run: python find_jobs.py
