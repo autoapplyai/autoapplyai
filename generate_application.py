@@ -1,65 +1,86 @@
 #!/usr/bin/env python3
-import json, time
+import os
+import time
+import json
+import yaml
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException, NoSuchElementException
-from selenium.webdriver.chrome.options import Options
-
-def load_jobs(path="jobs.json"):
-    with open(path) as f:
-        return json.load(f)
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from jinja2 import Environment, FileSystemLoader
+import weasyprint
 
 def setup_driver():
-    opts = Options()
-    opts.add_argument("--headless=new")       # headless
-    opts.add_argument("--no-sandbox")         # required in Actions
+    """
+    Launch headless Chromium (from ubuntu-latest) with a matching driver.
+    """
+    opts = webdriver.ChromeOptions()
+    opts.add_argument("--headless")
+    opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
-    opts.add_argument("--disable-gpu")
-    driver = webdriver.Chrome(options=opts)
-    driver.set_page_load_timeout(30)
-    return driver
+    # Point to the APT-installed Chromium binary
+    opts.binary_location = "/usr/bin/chromium-browser"
+    # Auto-download the correct ChromeDriver
+    service = Service(ChromeDriverManager().install())
+    return webdriver.Chrome(service=service, options=opts)
 
-def apply_job(driver, job):
-    url = job.get("apply_url")
-    company = job.get("company", "<unknown>")
-    title   = job.get("title", "<unknown>")
-    print(f"\n➡️  Applying to {title} at {company}")
+def render_cover_letter(context, template_path, output_dir="output"):
+    """
+    Render HTML template with Jinja2, convert to PDF with WeasyPrint.
+    """
+    env = Environment(loader=FileSystemLoader(os.getcwd()))
+    template = env.get_template(template_path)
+    html = template.render(context)
 
-    # 1) Try loading the page
-    try:
-        driver.get(url)
-    except WebDriverException as e:
-        print(f"⚠️  Skipping {company}: cannot load URL ({e.msg.splitlines()[0]})")
-        return
-
-    sel = job.get("selectors", {})
-    # 2) Upload resume
-    try:
-        resume_input = driver.find_element("css selector", sel["resume"])
-        resume_input.send_keys(job.get("resume_path", "resume.pdf"))
-    except (KeyError, NoSuchElementException):
-        print("⚠️  Resume upload field not found. Check your selector.")
-
-    # 3) Upload cover letter
-    try:
-        cover_input = driver.find_element("css selector", sel["cover_letter"])
-        cover_input.send_keys(job.get("cover_letter_path", "cover_letter.pdf"))
-    except (KeyError, NoSuchElementException):
-        print("⚠️  Cover-letter upload field not found. Check your selector.")
-
-    # 4) Hit submit
-    try:
-        submit_btn = driver.find_element("css selector", sel["submit"])
-        submit_btn.click()
-        time.sleep(2)
-        print("✅  Submitted successfully")
-    except (KeyError, NoSuchElementException):
-        print("❌  Failed to submit—check your submit-button selector.")
+    os.makedirs(output_dir, exist_ok=True)
+    out_pdf = os.path.join(output_dir, f"{context['applicant_name']}_CL.pdf")
+    weasyprint.HTML(string=html).write_pdf(out_pdf)
+    return out_pdf
 
 def main():
-    jobs = load_jobs()
+    # Load user/config data
+    cfg = yaml.safe_load(open("config.yaml"))
+    applicant = cfg["applicant"]
+    resume_pdf = cfg["resume_pdf"]
+    cl_template = cfg["cover_letter_template"]  # e.g. "cover_letter.html"
+    cl_context_base = cfg["cover_letter_context"]  # dict of static fields
+
+    # Load jobs to apply for
+    with open("jobs.json") as f:
+        jobs = json.load(f)
+
     driver = setup_driver()
+
     for job in jobs:
-        apply_job(driver, job)
+        url = job["url"]
+        title = job.get("title", "")
+        company = job.get("company", "")
+        print(f"➡️  Applying to {url}")
+
+        driver.get(url)
+        time.sleep(1)  # let page load
+
+        # === Fill out basic fields ===
+        # Update these selectors to match the application form you’re targeting
+        driver.find_element("name", "name").send_keys(applicant["name"])
+        driver.find_element("name", "email").send_keys(applicant["email"])
+        driver.find_element("name", "resume").send_keys(os.path.abspath(resume_pdf))
+
+        # === Generate & upload cover letter PDF ===
+        cl_context = {
+            **cl_context_base,
+            "applicant_name": applicant["name"],
+            "job_title": title,
+            "company": company
+        }
+        cl_pdf = render_cover_letter(cl_context, cl_template)
+        driver.find_element("name", "cover_letter").send_keys(os.path.abspath(cl_pdf))
+
+        # === Submit ===
+        driver.find_element("css selector", "button[type=submit]").click()
+        time.sleep(2)
+
+        print("✅  Submitted successfully\n")
+
     driver.quit()
 
 if __name__ == "__main__":
