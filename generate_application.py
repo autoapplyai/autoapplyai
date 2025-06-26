@@ -1,87 +1,66 @@
-import os
-import json
-import time
-
+#!/usr/bin/env python3
+import json, time
 from selenium import webdriver
-from selenium.webdriver.common.by import By
+from selenium.common.exceptions import WebDriverException, NoSuchElementException
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 1) Load your personal info
-# ─────────────────────────────────────────────────────────────────────────────
-with open("config/user_config.json") as f:
-    user = json.load(f)
+def load_jobs(path="jobs.json"):
+    with open(path) as f:
+        return json.load(f)
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 2) Load the list of safe jobs
-# ─────────────────────────────────────────────────────────────────────────────
-with open("safe_jobs.json") as f:
-    jobs = json.load(f)
+def setup_driver():
+    opts = Options()
+    opts.add_argument("--headless=new")       # headless
+    opts.add_argument("--no-sandbox")         # required in Actions
+    opts.add_argument("--disable-dev-shm-usage")
+    opts.add_argument("--disable-gpu")
+    driver = webdriver.Chrome(options=opts)
+    driver.set_page_load_timeout(30)
+    return driver
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 3) Configure headless Chrome to use the system chromedriver
-# ─────────────────────────────────────────────────────────────────────────────
-options = Options()
-options.add_argument("--headless")               # no browser UI
-options.add_argument("--no-sandbox")             # required on many servers
-options.add_argument("--disable-dev-shm-usage")  # overcome limited /dev/shm
-options.add_argument("--disable-gpu")            # recommended with headless
+def apply_job(driver, job):
+    url = job.get("apply_url")
+    company = job.get("company", "<unknown>")
+    title   = job.get("title", "<unknown>")
+    print(f"\n➡️  Applying to {title} at {company}")
 
-# Point at the chromedriver binary installed on PythonAnywhere
-service = Service("/usr/bin/chromedriver")
-driver  = webdriver.Chrome(service=service, options=options)
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 4) Loop through each job and apply
-# ─────────────────────────────────────────────────────────────────────────────
-for job in jobs:
-    title   = job["title"]
-    company = job["company"]
-    url     = job["link"]
-
-    # Build safe file paths
-    safe_title   = title.replace(" ", "_")
-    safe_company = company.replace(" ", "_").replace(".", "")
-    resume_path  = os.path.abspath(f"output/resumes/{safe_company}_{safe_title}_resume.txt")
-    cover_path   = os.path.abspath(f"output/cover_letters/{safe_company}_{safe_title}_cover_letter.txt")
-
-    print(f"➡️  Applying to {title} at {company}")
-    driver.get(url)
-    time.sleep(2)  # let the page finish loading
-
-    # ── Fill text fields (if present) ──────────────────────────────────────────
+    # 1) Try loading the page
     try:
-        driver.find_element(By.NAME, "name").send_keys(user["name"])
-        driver.find_element(By.NAME, "email").send_keys(user["email"])
-        driver.find_element(By.NAME, "phone").send_keys(user["phone"])
-    except Exception:
-        pass  # skip if those fields aren't on this form
+        driver.get(url)
+    except WebDriverException as e:
+        print(f"⚠️  Skipping {company}: cannot load URL ({e.msg.splitlines()[0]})")
+        return
 
-    # ── Upload resume ─────────────────────────────────────────────────────────
+    sel = job.get("selectors", {})
+    # 2) Upload resume
     try:
-        driver.find_element(By.NAME, "resume").send_keys(resume_path)
-    except Exception:
+        resume_input = driver.find_element("css selector", sel["resume"])
+        resume_input.send_keys(job.get("resume_path", "resume.pdf"))
+    except (KeyError, NoSuchElementException):
         print("⚠️  Resume upload field not found. Check your selector.")
 
-    # ── Upload cover letter ──────────────────────────────────────────────────
+    # 3) Upload cover letter
     try:
-        driver.find_element(By.NAME, "cover_letter").send_keys(cover_path)
-    except Exception:
-        print("⚠️  Cover‐letter upload field not found. Check your selector.")
+        cover_input = driver.find_element("css selector", sel["cover_letter"])
+        cover_input.send_keys(job.get("cover_letter_path", "cover_letter.pdf"))
+    except (KeyError, NoSuchElementException):
+        print("⚠️  Cover-letter upload field not found. Check your selector.")
 
-    # ── Submit the form ──────────────────────────────────────────────────────
+    # 4) Hit submit
     try:
-        driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
-        print(f"✔️  Applied to {title} at {company}")
-    except Exception:
+        submit_btn = driver.find_element("css selector", sel["submit"])
+        submit_btn.click()
+        time.sleep(2)
+        print("✅  Submitted successfully")
+    except (KeyError, NoSuchElementException):
         print("❌  Failed to submit—check your submit-button selector.")
 
-    time.sleep(1)  # short pause before the next loop
+def main():
+    jobs = load_jobs()
+    driver = setup_driver()
+    for job in jobs:
+        apply_job(driver, job)
+    driver.quit()
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 5) Clean up
-# ─────────────────────────────────────────────────────────────────────────────
-driver.quit()
-
-
+if __name__ == "__main__":
+    main()
