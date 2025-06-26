@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install dependencies
+      - name: Install Python deps
         run: |
           pip install selenium pyyaml requests weasyprint jinja2
 
@@ -26,10 +26,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
-          # Make Selenium’s default look for "google-chrome"
+
+          # Point Selenium’s “chrome” to Chromium
           sudo ln -sf /usr/bin/chromium-browser /usr/bin/google-chrome
-          # Make sure the driver is on your PATH
-          sudo ln -sf /usr/bin/chromedriver /usr/local/bin/chromedriver
+
+          # Ensure chromedriver on PATH is the apt-installed one
+          if [ -f /usr/bin/chromedriver ]; then
+            sudo ln -sf /usr/bin/chromedriver /usr/local/bin/chromedriver
+          elif [ -f /usr/lib/chromium-browser/chromedriver ]; then
+            sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
+          fi
 
       - name: Find jobs
         run: python find_jobs.py
