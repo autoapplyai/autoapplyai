@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-import os
-import sys
-import time
-import json
-import yaml
-
+import os, sys, time, json, yaml
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import WebDriverException
@@ -20,19 +15,16 @@ def setup_driver():
     opts.add_argument("--single-process")
     opts.add_argument("--disable-extensions")
     opts.binary_location = "/usr/bin/chromium-browser"
-
-    service = Service(ChromeDriverManager().install())
-    return webdriver.Chrome(service=service, options=opts)
+    svc = Service(ChromeDriverManager().install())
+    return webdriver.Chrome(service=svc, options=opts)
 
 def main():
     root = os.getcwd()
-
-    # Load config.yaml
     cfg_path = os.path.join(root, "config.yaml")
     try:
         cfg = yaml.safe_load(open(cfg_path))
     except Exception as e:
-        print(f"❌ Failed to load {cfg_path}: {e}")
+        print(f"❌ Could not load config.yaml: {e}")
         sys.exit(1)
 
     name  = cfg.get("applicant_name")
@@ -41,49 +33,39 @@ def main():
         print("❌ config.yaml must define applicant_name and applicant_email")
         sys.exit(1)
 
-    # Locate PDFs
-    resume_pdf = os.path.join(root, "output", f"{name}_resume.pdf")
-    cl_pdf     = os.path.join(root, "output", f"{name}_CL.pdf")
-    for p in (resume_pdf, cl_pdf):
+    resume = os.path.join(root, "output", f"{name}_resume.pdf")
+    cl     = os.path.join(root, "output", f"{name}_CL.pdf")
+    for p in (resume, cl):
         if not os.path.exists(p):
-            print(f"❌ Required file not found: {p}")
+            print(f"❌ Missing file: {p}")
             sys.exit(1)
 
-    # Load jobs.json
-    jobs_path = os.path.join(root, "jobs.json")
-    try:
-        jobs = json.load(open(jobs_path))
-    except Exception as e:
-        print(f"❌ Failed to load {jobs_path}: {e}")
-        sys.exit(1)
+    jobs = json.load(open(os.path.join(root, "jobs.json")))
     if not jobs:
-        print("⚠️ No jobs found; exiting.")
+        print("⚠️  No jobs found in jobs.json")
         sys.exit(0)
 
     driver = setup_driver()
-
     for job in jobs:
-        url = job.get("url")
+        url = job["url"]
         print(f"➡️  Applying to {url}")
-        # 1) Try to open the page, skip on network errors
         try:
             driver.get(url)
         except WebDriverException as e:
-            print(f"❌ Cannot reach {url}: {e.msg.splitlines()[0]} – skipping\n")
+            msg = e.msg.splitlines()[0]
+            print(f"❌ Cannot reach {url}: {msg} – skipping\n")
             continue
-
         time.sleep(1)
         try:
-            driver.find_element("name", "name").send_keys(name)
-            driver.find_element("name", "email").send_keys(email)
-            driver.find_element("name", "resume").send_keys(resume_pdf)
-            driver.find_element("name", "cover_letter").send_keys(cl_pdf)
-            driver.find_element("css selector", "button[type=submit]").click()
+            driver.find_element("name","name").send_keys(name)
+            driver.find_element("name","email").send_keys(email)
+            driver.find_element("name","resume").send_keys(resume)
+            driver.find_element("name","cover_letter").send_keys(cl)
+            driver.find_element("css selector","button[type=submit]").click()
             time.sleep(2)
             print("✅  Submitted successfully\n")
         except Exception as e:
-            print(f"❌  Failed to apply to {url}: {e}\n")
-
+            print(f"❌  Failed on {url}: {e}\n")
     driver.quit()
 
 if __name__ == "__main__":
