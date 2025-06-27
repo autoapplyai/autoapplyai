@@ -7,12 +7,10 @@ import yaml
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import WebDriverException
 from webdriver_manager.chrome import ChromeDriverManager
 
 def setup_driver():
-    """
-    Launch headless Ubuntu Chromium with flags that avoid DevToolsActivePort errors.
-    """
     opts = webdriver.ChromeOptions()
     opts.add_argument("--headless=new")
     opts.add_argument("--disable-gpu")
@@ -22,13 +20,14 @@ def setup_driver():
     opts.add_argument("--single-process")
     opts.add_argument("--disable-extensions")
     opts.binary_location = "/usr/bin/chromium-browser"
+
     service = Service(ChromeDriverManager().install())
     return webdriver.Chrome(service=service, options=opts)
 
 def main():
-    root = os.getcwd()  # repo root
+    root = os.getcwd()
 
-    # 1) Load config.yaml
+    # Load config.yaml
     cfg_path = os.path.join(root, "config.yaml")
     try:
         cfg = yaml.safe_load(open(cfg_path))
@@ -36,14 +35,13 @@ def main():
         print(f"❌ Failed to load {cfg_path}: {e}")
         sys.exit(1)
 
-    # 2) Extract your name & email
     name  = cfg.get("applicant_name")
     email = cfg.get("applicant_email")
     if not name or not email:
         print("❌ config.yaml must define applicant_name and applicant_email")
         sys.exit(1)
 
-    # 3) Locate your pre-generated PDFs under output/
+    # Locate PDFs
     resume_pdf = os.path.join(root, "output", f"{name}_resume.pdf")
     cl_pdf     = os.path.join(root, "output", f"{name}_CL.pdf")
     for p in (resume_pdf, cl_pdf):
@@ -51,7 +49,7 @@ def main():
             print(f"❌ Required file not found: {p}")
             sys.exit(1)
 
-    # 4) Load jobs.json
+    # Load jobs.json
     jobs_path = os.path.join(root, "jobs.json")
     try:
         jobs = json.load(open(jobs_path))
@@ -62,16 +60,20 @@ def main():
         print("⚠️ No jobs found; exiting.")
         sys.exit(0)
 
-    # 5) Start Selenium
     driver = setup_driver()
 
-    # 6) Loop & apply
     for job in jobs:
         url = job.get("url")
         print(f"➡️  Applying to {url}")
+        # 1) Try to open the page, skip on network errors
         try:
             driver.get(url)
-            time.sleep(1)
+        except WebDriverException as e:
+            print(f"❌ Cannot reach {url}: {e.msg.splitlines()[0]} – skipping\n")
+            continue
+
+        time.sleep(1)
+        try:
             driver.find_element("name", "name").send_keys(name)
             driver.find_element("name", "email").send_keys(email)
             driver.find_element("name", "resume").send_keys(resume_pdf)
