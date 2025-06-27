@@ -1,11 +1,5 @@
 [
-  { "url": "https://automattic.com/work-with-us/" },
-  { "url": "https://buffer.com/journey" },
-  { "url": "https://about.gitlab.com/jobs/" },
-  { "url": "https://zapier.com/jobs/" },
-  { "url": "https://doist.com/careers/" },
-  { "url": "https://remote.com/careers" },
-  { "url": "https://www.toptal.com/careers" },
-  { "url": "https://github.com/about/careers" },
-  { "url": "https://www.invisionapp.com/company#join" }
+  { "url": "https://weworkremotely.com/remote-jobs/search?term=developer" },
+  { "url": "https://www.indeed.com/q-Remote-jobs.html" },
+  { "url": "https://www.workingnomads.com/jobs?category=devops" }
 ]
