@@ -10,9 +10,6 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 def setup_driver():
-    """
-    Launch headless Ubuntu Chromium with webdriver-manager.
-    """
     opts = webdriver.ChromeOptions()
     opts.add_argument("--headless")
     opts.add_argument("--no-sandbox")
@@ -22,8 +19,7 @@ def setup_driver():
     return webdriver.Chrome(service=service, options=opts)
 
 def main():
-    # Use the current working dir as repo root
-    root = os.getcwd()
+    root = os.getcwd()  # this is ~/autoapplyai
 
     # 1) Load config.yaml
     cfg_path = os.path.join(root, "config.yaml")
@@ -40,7 +36,7 @@ def main():
         print("❌ config.yaml must define applicant_name and applicant_email")
         sys.exit(1)
 
-    # 3) Locate your pre-generated PDFs under output/
+    # 3) Locate your pre-generated PDFs in output/
     resume_pdf = os.path.join(root, "output", f"{name}_resume.pdf")
     cl_pdf     = os.path.join(root, "output", f"{name}_CL.pdf")
     for p in (resume_pdf, cl_pdf):
@@ -62,21 +58,19 @@ def main():
     # 5) Start Selenium
     driver = setup_driver()
 
-    # 6) Apply to each job
+    # 6) Loop & apply
     for job in jobs:
         url = job.get("url")
         print(f"➡️  Applying to {url}")
         try:
             driver.get(url)
             time.sleep(1)
-
             driver.find_element("name", "name").send_keys(name)
             driver.find_element("name", "email").send_keys(email)
             driver.find_element("name", "resume").send_keys(resume_pdf)
             driver.find_element("name", "cover_letter").send_keys(cl_pdf)
             driver.find_element("css selector", "button[type=submit]").click()
             time.sleep(2)
-
             print("✅  Submitted successfully\n")
         except Exception as e:
             print(f"❌  Failed to apply to {url}: {e}\n")
@@ -85,4 +79,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-[paste the script above exactly]
