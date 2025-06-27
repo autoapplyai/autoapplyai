@@ -1,18 +1,15 @@
-# config.yaml
-personal:
-  name: "Jeff McEntarffer"
-  email: "Jmcentarffer13@Gmail.com"
-  location: "Ecuador (US Citizen)"
-  phone: "+593-98-104-8846"
-skills:
-  - customer service
-  - sales
-  - administrative support
-  - strategic planning
-  - budgeting
-  - bilingual (English/Spanish)
-threshold: 0.75    # only keep jobs matching ≥75% of these skills
-resume_template: "templates/resume.tpl"
-cover_template:  "templates/cover.tpl"
-resume_output:   "output/Jeff_McEntarffer_Resume.pdf"
-cover_output:    "output/Jeff_McEntarffer_CL.pdf"
+# ────────────────────────────────────────────
+# Who you are:
+applicant_name: Jeff_McEntarffer
+applicant_email: jeff@example.com
+
+# ────────────────────────────────────────────
+# Where your Jinja2 cover-letter lives:
+cover_letter_template: "templates/cover_letter.html"
+
+# ────────────────────────────────────────────
+# Any static fields your template expects:
+cover_letter_context:
+  greeting: "Hello Hiring Team,"
+  opening: "I’m thrilled to apply for the {{ job_title }} role at {{ company }}."
+  closing: "Thank you for your consideration,\n\nJeff McEntarffer"
