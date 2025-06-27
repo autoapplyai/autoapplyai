@@ -11,7 +11,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 def setup_driver():
     """
-    Launch headless Ubuntu Chromium with extra flags to avoid DevToolsActivePort errors.
+    Launch headless Ubuntu Chromium with flags that avoid DevToolsActivePort errors.
     """
     opts = webdriver.ChromeOptions()
     opts.add_argument("--headless=new")
@@ -22,12 +22,11 @@ def setup_driver():
     opts.add_argument("--single-process")
     opts.add_argument("--disable-extensions")
     opts.binary_location = "/usr/bin/chromium-browser"
-
     service = Service(ChromeDriverManager().install())
     return webdriver.Chrome(service=service, options=opts)
 
 def main():
-    root = os.getcwd()
+    root = os.getcwd()  # repo root
 
     # 1) Load config.yaml
     cfg_path = os.path.join(root, "config.yaml")
@@ -44,7 +43,7 @@ def main():
         print("❌ config.yaml must define applicant_name and applicant_email")
         sys.exit(1)
 
-    # 3) Locate your pre-generated PDFs in output/
+    # 3) Locate your pre-generated PDFs under output/
     resume_pdf = os.path.join(root, "output", f"{name}_resume.pdf")
     cl_pdf     = os.path.join(root, "output", f"{name}_CL.pdf")
     for p in (resume_pdf, cl_pdf):
@@ -87,4 +86,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-[ paste the script above exactly ]
