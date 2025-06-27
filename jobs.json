@@ -1,11 +1,11 @@
 [
-  {
-    "title": "TestCo Backend Developer",
-    "url": "https://testco.example.com/jobs/backend-developer",
-    "company": "TestCo",
-    "location": "Remote",
-    "tags": ["Python", "Django", "REST"],
-    "match_percent": 90,
-    "timestamp": "2025-06-26T23:00:00Z"
-  }
+  { "url": "https://automattic.com/work-with-us/" },
+  { "url": "https://buffer.com/journey" },
+  { "url": "https://about.gitlab.com/jobs/" },
+  { "url": "https://zapier.com/jobs/" },
+  { "url": "https://doist.com/careers/" },
+  { "url": "https://remote.com/careers" },
+  { "url": "https://www.toptal.com/careers" },
+  { "url": "https://github.com/about/careers" },
+  { "url": "https://www.invisionapp.com/company#join" }
 ]
