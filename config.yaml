@@ -1,10 +1,10 @@
 # ────────────────────────────────────────────
-# Personal Info (used by generate_application.py)
+# 1) Personal Info (for generate_application.py)
 applicant_name: Jeff_McEntarffer
 applicant_email: jeff@example.com
 
 # ────────────────────────────────────────────
-# Cover‐letter Template (Jinja HTML) & Context
+# 2) Cover‐letter Template & Context
 cover_letter_template: "templates/cover_letter.html"
 cover_letter_context:
   greeting: "Hello Hiring Team,"
@@ -12,16 +12,17 @@ cover_letter_context:
   closing: "Thank you for your consideration,\n\nJeff McEntarffer"
 
 # ────────────────────────────────────────────
-# Skills to match on (required by find_jobs.py)
+# 3) Job‐Finding Settings (for find_jobs.py)
 skills:
   - Python
   - Django
   - REST
 
-# ────────────────────────────────────────────
-# (Optional) List of URLs to scrape for new jobs
-# your find_jobs.py may look for this—if it does, uncomment & fill:
-# job_search_urls:
-#   - "https://testco.example.com/careers"
-#
-# And/or any other keys your find_jobs.py references.
+# Minimum fraction of your skills that must appear 
+# in a job posting to consider it a match (0.0–1.0)
+threshold: 0.6
+
+# List of company career‐page URLs to scrape
+job_search_urls:
+  - "https://example.com/careers"
+  - "https://anotherco.example.org/jobs"
