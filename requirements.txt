@@ -1,0 +1,5 @@
+beautifulsoup4
+requests
+pyyaml
+selenium
+webdriver-manager
