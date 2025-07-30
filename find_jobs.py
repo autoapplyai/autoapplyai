@@ -192,15 +192,5 @@ def main():
         print("\n🎯 Sample jobs found:")
         for i, job in enumerate(filtered_jobs[:3], 1):
             print(f"{i}. {job['title']} at {job['company']} ({job['source']})")
-
 if __name__ == "__main__":
-    main()
-            seen.add(j["url"])
-            unique.append(j)
-
-    with open("jobs.json", "w") as f:
-        json.dump(unique, f, indent=2)
-    print(f"✅ Wrote {len(unique)} jobs to jobs.json")
-
-if __name__ == "__main__":
-    main()
+    main()         
