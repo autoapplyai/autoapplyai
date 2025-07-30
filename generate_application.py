@@ -2,7 +2,10 @@
 import os, sys, time, json, yaml
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, WebDriverException
 from webdriver_manager.chrome import ChromeDriverManager
 
 def setup_driver():
@@ -17,6 +20,51 @@ def setup_driver():
     opts.binary_location = "/usr/bin/chromium-browser"
     svc = Service(ChromeDriverManager().install())
     return webdriver.Chrome(service=svc, options=opts)
+
+def fill_form(driver, url, name, email, resume, cl):
+    try:
+        driver.get(url)
+        time.sleep(1)
+
+        # Find fields by placeholder or label
+        fields = {
+            "name": None,
+            "email": None,
+            "resume": None,
+            "cover_letter": None
+        }
+
+        for field_name, field_value in fields.items():
+            try:
+                field = WebDriverWait(driver, 5).until(
+                    EC.presence_of_element_located((By.XPATH, f"//input[@placeholder*='{field_name}' or @name='{field_name}']"))
+                )
+                fields[field_name] = field
+            except TimeoutException:
+                print(f"Field '{field_name}' not found")
+
+        # Fill out fields
+        if fields["name"]: fields["name"].send_keys(name)
+        if fields["email"]: fields["email"].send_keys(email)
+
+        # Handle file uploads
+        if fields["resume"]: fields["resume"].send_keys(resume)
+        if fields["cover_letter"]: fields["cover_letter"].send_keys(cl)
+
+        # Submit form
+        try:
+            submit_button = WebDriverWait(driver, 5).until(
+                EC.element_to_be_clickable((By.XPATH, "//button[@type='submit']"))
+            )
+            submit_button.click()
+            time.sleep(2)
+            print("✅  Submitted successfully\n")
+        except TimeoutException:
+            print("❌  Submit button not found")
+
+    except WebDriverException as e:
+        msg = e.msg.splitlines()[0]
+        print(f"❌ Cannot reach {url}: {msg} – skipping\n")
 
 def main():
     root = os.getcwd()
@@ -49,23 +97,7 @@ def main():
     for job in jobs:
         url = job["url"]
         print(f"➡️  Applying to {url}")
-        try:
-            driver.get(url)
-        except WebDriverException as e:
-            msg = e.msg.splitlines()[0]
-            print(f"❌ Cannot reach {url}: {msg} – skipping\n")
-            continue
-        time.sleep(1)
-        try:
-            driver.find_element("name","name").send_keys(name)
-            driver.find_element("name","email").send_keys(email)
-            driver.find_element("name","resume").send_keys(resume)
-            driver.find_element("name","cover_letter").send_keys(cl)
-            driver.find_element("css selector","button[type=submit]").click()
-            time.sleep(2)
-            print("✅  Submitted successfully\n")
-        except Exception as e:
-            print(f"❌  Failed on {url}: {e}\n")
+        fill_form(driver, url, name, email, resume, cl)
     driver.quit()
 
 if __name__ == "__main__":
