@@ -1,6 +1,18 @@
 [
-  "https://weworkremotely.com/remote-jobs/xyz-company-python-developer",
-  "https://remoteok.com/remote-jobs/abc-inc-data-engineer",
-  "https://workingnomads.com/jobs/123-software-engineer"
+  {
+    "url": "https://weworkremotely.com/remote-jobs/xyz-company-python-developer",
+    "title": "Python Developer",
+    "company": "XYZ Company"
+  },
+  {
+    "url": "https://remoteok.com/remote-jobs/abc-inc-data-engineer",
+    "title": "Data Engineer",
+    "company": "ABC Inc"
+  },
+  {
+    "url": "https://workingnomads.com/jobs/123-software-engineer",
+    "title": "Software Engineer",
+    "company": "Unknown"
+  }
 ]
 
