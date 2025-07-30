@@ -13,6 +13,7 @@ def setup_driver():
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
     opts.add_argument("--disable-gpu")
+    opts.add_argument("--headless")
     svc = Service(ChromeDriverManager().install())
     return webdriver.Chrome(service=svc, options=opts)
 
