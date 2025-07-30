@@ -1,21 +1,19 @@
 #!/usr/bin/env python3
 import os, sys, time, json, yaml
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
+import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
-from webdriver_manager.chrome import ChromeDriverManager
 
 def setup_driver():
-    opts = webdriver.ChromeOptions()
+    opts = uc.ChromeOptions()
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
     opts.add_argument("--disable-gpu")
     opts.add_argument("--headless")
-    svc = Service(ChromeDriverManager().install())
-    return webdriver.Chrome(service=svc, options=opts)
+    driver = uc.Chrome(options=opts)
+    return driver
 
 def fill_form(driver, url, name, email, resume, cl):
     try:
@@ -59,7 +57,7 @@ def fill_form(driver, url, name, email, resume, cl):
             print("❌  Submit button not found")
 
     except WebDriverException as e:
-        msg = e.msg.splitlines()[0]
+        msg = str(e).splitlines()[0]
         print(f"❌ Cannot reach {url}: {msg} – skipping\n")
 
 def main():
