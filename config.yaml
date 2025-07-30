@@ -10,9 +10,11 @@ cover_letter_context:
 skills:
   - Python
   - Remote
+  - Selenium
+  - Automation
 
-threshold: 0.5
+threshold: 0.75
 
-resume_path: output/jeff_mcentarffer_resume.pdf
-cover_letter_path: output/jeff_mcentarffer_CL.pdf
-
+resume_template: "templates/resume_template.docx"
+resume_path: "output/jeff_mcentarffer_resume.pdf"
+cover_letter_path: "output/jeff_mcentarffer_CL.pdf"
