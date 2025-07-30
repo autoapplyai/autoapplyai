@@ -10,6 +10,7 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
+from docx import Document
 
 def setup_driver():
     opts = uc.ChromeOptions()
@@ -34,9 +35,16 @@ def calculate_similarity(job_skills, applicant_skills):
     return similarity[0][0]
 
 def generate_cover_letter(job_title, company, matching_skills):
-    # Use a simple template for now
     cover_letter = f"Dear Hiring Manager,\n\nI am excited to apply for the {job_title} role at {company}.\n\nWith my skills in {', '.join(matching_skills)}, I believe I would be a great fit for this position.\n\nThank you for considering my application.\n\nSincerely,\n[Your Name]"
     return cover_letter
+
+def update_resume(job_skills, resume_template):
+    document = Document(resume_template)
+    for paragraph in document.paragraphs:
+        for skill in job_skills:
+            if skill in paragraph.text:
+                paragraph.text = paragraph.text.replace(skill, f"**{skill}**")
+    document.save("updated_resume.docx")
 
 def fill_form(driver, url, name, email, resume, cl):
     try:
@@ -95,15 +103,10 @@ def main():
     name  = cfg.get("applicant_name")
     email = cfg.get("applicant_email")
     skills = cfg.get("skills")
-    if not name or not email or not skills:
-        print("❌ config.yaml must define applicant_name, applicant_email, and skills")
+    resume_template = cfg.get("resume_template")
+    if not name or not email or not skills or not resume_template:
+        print("❌ config.yaml must define applicant_name, applicant_email, skills, and resume_template")
         sys.exit(1)
-
-    resume = os.path.join(root, "output", f"{name}_resume.pdf")
-    for p in (resume,):
-        if not os.path.exists(p):
-            print(f"❌ Missing file: {p}")
-            sys.exit(1)
 
     jobs = json.load(open(os.path.join(root, "jobs.json")))
     if not jobs:
@@ -119,6 +122,8 @@ def main():
         if similarity >= 0.75:
             print(f"➡️  Applying to {url}")
             cl = generate_cover_letter(job.get("title", ""), job.get("company", ""), job_skills)
+            update_resume(job_skills, resume_template)
+            resume = "updated_resume.docx"
             fill_form(driver, url, name, email, resume, cl)
     driver.quit()
 
