@@ -5,6 +5,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import CountVectorizer
 
 def setup_driver():
     opts = uc.ChromeOptions()
@@ -14,6 +19,24 @@ def setup_driver():
     opts.add_argument("--headless")
     driver = uc.Chrome(options=opts)
     return driver
+
+def extract_skills(job_description, skills):
+    tokens = word_tokenize(job_description.lower())
+    tokens = [t for t in tokens if t not in stopwords.words('english')]
+    job_skills = [t for t in tokens if t in [skill.lower() for skill in skills]]
+    return job_skills
+
+def calculate_similarity(job_skills, applicant_skills):
+    vectorizer = CountVectorizer()
+    job_skills_vector = vectorizer.fit_transform([' '.join(job_skills)])
+    applicant_skills_vector = vectorizer.transform([' '.join(applicant_skills)])
+    similarity = cosine_similarity(job_skills_vector, applicant_skills_vector)
+    return similarity[0][0]
+
+def generate_cover_letter(job_title, company, matching_skills):
+    # Use a simple template for now
+    cover_letter = f"Dear Hiring Manager,\n\nI am excited to apply for the {job_title} role at {company}.\n\nWith my skills in {', '.join(matching_skills)}, I believe I would be a great fit for this position.\n\nThank you for considering my application.\n\nSincerely,\n[Your Name]"
+    return cover_letter
 
 def fill_form(driver, url, name, email, resume, cl):
     try:
@@ -71,13 +94,13 @@ def main():
 
     name  = cfg.get("applicant_name")
     email = cfg.get("applicant_email")
-    if not name or not email:
-        print("❌ config.yaml must define applicant_name and applicant_email")
+    skills = cfg.get("skills")
+    if not name or not email or not skills:
+        print("❌ config.yaml must define applicant_name, applicant_email, and skills")
         sys.exit(1)
 
     resume = os.path.join(root, "output", f"{name}_resume.pdf")
-    cl     = os.path.join(root, "output", f"{name}_CL.pdf")
-    for p in (resume, cl):
+    for p in (resume,):
         if not os.path.exists(p):
             print(f"❌ Missing file: {p}")
             sys.exit(1)
@@ -90,8 +113,13 @@ def main():
     driver = setup_driver()
     for job in jobs:
         url = job["url"]
-        print(f"➡️  Applying to {url}")
-        fill_form(driver, url, name, email, resume, cl)
+        job_description = job.get("description", "")
+        job_skills = extract_skills(job_description, skills)
+        similarity = calculate_similarity(job_skills, [skill.lower() for skill in skills])
+        if similarity >= 0.75:
+            print(f"➡️  Applying to {url}")
+            cl = generate_cover_letter(job.get("title", ""), job.get("company", ""), job_skills)
+            fill_form(driver, url, name, email, resume, cl)
     driver.quit()
 
 if __name__ == "__main__":
